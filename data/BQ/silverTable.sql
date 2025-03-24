@@ -1,5 +1,5 @@
 --Step 1: Create the customers Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.customers`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.customers`
 (
     customer_id INT64,
     name STRING,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.customers`
 
 
 --Step 2: Update Existing Active Records if There Are Changes
-MERGE INTO  `avd-databricks-demo.silver_dataset.customers` target
+MERGE INTO  `ashuproj-454704.silver_dataset.customers` target
 USING 
   (SELECT DISTINCT
     *, 
@@ -24,7 +24,7 @@ USING
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     True as is_active
-  FROM `avd-databricks-demo.bronze_dataset.customers`) source
+  FROM `ashuproj-454704.bronze_dataset.customers`) source
 ON target.customer_id = source.customer_id AND target.is_active = true
 WHEN MATCHED AND 
             (
@@ -36,7 +36,7 @@ WHEN MATCHED AND
         target.effective_end_date = current_timestamp();
 
 --Step 3: Insert New or Updated Records
-MERGE INTO  `avd-databricks-demo.silver_dataset.customers` target
+MERGE INTO  `ashuproj-454704.silver_dataset.customers` target
 USING 
   (SELECT DISTINCT
     *, 
@@ -47,7 +47,7 @@ USING
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     True as is_active
-  FROM `avd-databricks-demo.bronze_dataset.customers`) source
+  FROM `ashuproj-454704.bronze_dataset.customers`) source
 ON target.customer_id = source.customer_id AND target.is_active = true
 WHEN NOT MATCHED THEN 
     INSERT (customer_id, name, email, updated_at, is_quarantined, effective_start_date, effective_end_date, is_active)
@@ -55,7 +55,7 @@ WHEN NOT MATCHED THEN
 
 
 --Step 1: Create the orders Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.orders`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.orders`
 (
     order_id INT64,
     customer_id INT64,
@@ -68,14 +68,14 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.orders`
 );
 
 --Step 2: Update Existing Active Records if There Are Changes
-MERGE INTO `avd-databricks-demo.silver_dataset.orders` target
+MERGE INTO `ashuproj-454704.silver_dataset.orders` target
 USING 
   (SELECT DISTINCT
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.orders`) source
+  FROM `ashuproj-454704.bronze_dataset.orders`) source
 ON target.order_id = source.order_id AND target.is_active = true
 WHEN MATCHED AND 
             (
@@ -89,21 +89,21 @@ WHEN MATCHED AND
         target.effective_end_date = current_timestamp();
 
 --Step 3: Insert New or Updated Records
-MERGE INTO `avd-databricks-demo.silver_dataset.orders` target
+MERGE INTO `ashuproj-454704.silver_dataset.orders` target
 USING 
   (SELECT DISTINCT
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.orders`) source
+  FROM `ashuproj-454704.bronze_dataset.orders`) source
 ON target.order_id = source.order_id AND target.is_active = true
 WHEN NOT MATCHED THEN 
     INSERT (order_id, customer_id, order_date, total_amount, updated_at, effective_start_date, effective_end_date, is_active)
     VALUES (source.order_id, source.customer_id, source.order_date, source.total_amount, source.updated_at, source.effective_start_date, source.effective_end_date, source.is_active);
 
 --Step 1: Create the order_items Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.order_items`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.order_items`
 (
     order_item_id INT64,
     order_id INT64,
@@ -117,14 +117,14 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.order_items`
 );
 
 --Step 2: Update Existing Active Records if There Are Changes
-MERGE INTO `avd-databricks-demo.silver_dataset.order_items` target
+MERGE INTO `ashuproj-454704.silver_dataset.order_items` target
 USING 
   (SELECT DISTINCT
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.order_items`) source
+  FROM `ashuproj-454704.bronze_dataset.order_items`) source
 ON target.order_item_id = source.order_item_id AND target.is_active = true
 WHEN MATCHED AND 
             (
@@ -139,21 +139,21 @@ WHEN MATCHED AND
         target.effective_end_date = current_timestamp();
 
 --Step 3: Insert New or Updated Records
-MERGE INTO `avd-databricks-demo.silver_dataset.order_items` target
+MERGE INTO `ashuproj-454704.silver_dataset.order_items` target
 USING 
   (SELECT DISTINCT
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.order_items`) source
+  FROM `ashuproj-454704.bronze_dataset.order_items`) source
 ON target.order_item_id = source.order_item_id AND target.is_active = true
 WHEN NOT MATCHED THEN 
     INSERT (order_item_id, order_id, product_id, quantity, price, updated_at, effective_start_date, effective_end_date, is_active)
     VALUES (source.order_item_id, source.order_id, source.product_id, source.quantity, source.price, source.updated_at, source.effective_start_date, source.effective_end_date, source.is_active);
 
 --Step 1: Create the categories Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.categories`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.categories`
 (
     category_id INT64,
     name STRING,
@@ -162,10 +162,10 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.categories`
 );
 
 --Step 2: Truncate table
-TRUNCATE TABLE `avd-databricks-demo.silver_dataset.categories`;
+TRUNCATE TABLE `ashuproj-454704.silver_dataset.categories`;
 
 --Step 3: Insert New or Updated Records
-INSERT INTO `avd-databricks-demo.silver_dataset.categories`
+INSERT INTO `ashuproj-454704.silver_dataset.categories`
 SELECT 
   *,
   CASE 
@@ -173,10 +173,10 @@ SELECT
     ELSE FALSE
   END AS is_quarantined
   
-FROM `avd-databricks-demo.bronze_dataset.categories`;
+FROM `ashuproj-454704.bronze_dataset.categories`;
 
 --Step 1: Create the products Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.products`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.products`
 (
   product_id INT64,
   name STRING,
@@ -187,10 +187,10 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.products`
 );
 
 --Step 2: Truncate table
-TRUNCATE TABLE `avd-databricks-demo.silver_dataset.products`;
+TRUNCATE TABLE `ashuproj-454704.silver_dataset.products`;
 
 --Step 3: Insert New or Updated Records
-INSERT INTO `avd-databricks-demo.silver_dataset.products`
+INSERT INTO `ashuproj-454704.silver_dataset.products`
 SELECT 
   *,
   CASE 
@@ -198,10 +198,10 @@ SELECT
     ELSE FALSE
   END AS is_quarantined
   
-FROM `avd-databricks-demo.bronze_dataset.products`;
+FROM `ashuproj-454704.bronze_dataset.products`;
 -------------------------------------------------------------------------------------------------------------
 --Step 1: Create the product_supplier Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.product_suppliers`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.product_suppliers`
 (
     supplier_id INT64,
     product_id INT64,
@@ -213,14 +213,14 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.product_suppliers
 );
 
 --Step 2: Update Existing Active Records if There Are Changes
-MERGE INTO `avd-databricks-demo.silver_dataset.product_suppliers` target
+MERGE INTO `ashuproj-454704.silver_dataset.product_suppliers` target
 USING 
   (SELECT 
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.product_suppliers`) source
+  FROM `ashuproj-454704.bronze_dataset.product_suppliers`) source
 ON target.supplier_id = source.supplier_id 
    AND target.product_id = source.product_id 
    AND target.is_active = true
@@ -234,14 +234,14 @@ WHEN MATCHED AND
         target.effective_end_date = current_timestamp();
 
 --Step 3: Insert New or Updated Records
-MERGE INTO `avd-databricks-demo.silver_dataset.product_suppliers` target
+MERGE INTO `ashuproj-454704.silver_dataset.product_suppliers` target
 USING 
   (SELECT 
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.product_suppliers`) source
+  FROM `ashuproj-454704.bronze_dataset.product_suppliers`) source
 ON target.supplier_id = source.supplier_id 
    AND target.product_id = source.product_id 
    AND target.is_active = true
@@ -251,7 +251,7 @@ WHEN NOT MATCHED THEN
 
 
 --Step 1: Create the suppliers Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.suppliers`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.suppliers`
 (
   supplier_id INT64,
   supplier_name STRING,
@@ -266,10 +266,10 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.suppliers`
 );
 
 --Step 2: Truncate table
-TRUNCATE TABLE `avd-databricks-demo.silver_dataset.suppliers`;
+TRUNCATE TABLE `ashuproj-454704.silver_dataset.suppliers`;
 
 --Step 3: Insert New or Updated Records
-INSERT INTO `avd-databricks-demo.silver_dataset.suppliers`
+INSERT INTO `ashuproj-454704.silver_dataset.suppliers`
 SELECT 
   *,
   CASE 
@@ -277,11 +277,11 @@ SELECT
     ELSE FALSE
   END AS is_quarantined
   
-FROM `avd-databricks-demo.bronze_dataset.suppliers`;
+FROM `ashuproj-454704.bronze_dataset.suppliers`;
 -------------------------------------------------------------------------------------------------------------
 
 --Step 1: Create the customer_reviews Table in the Silver Layer
-CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.customer_reviews`
+CREATE TABLE IF NOT EXISTS `ashuproj-454704.silver_dataset.customer_reviews`
 (
     id STRING,
     customer_id INT64,
@@ -295,14 +295,14 @@ CREATE TABLE IF NOT EXISTS `avd-databricks-demo.silver_dataset.customer_reviews`
 );
 
 --Step 2: Update Existing Active Records if There Are Changes
-MERGE INTO `avd-databricks-demo.silver_dataset.customer_reviews` target
+MERGE INTO `ashuproj-454704.silver_dataset.customer_reviews` target
 USING 
   (SELECT 
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.customer_reviews`) source
+  FROM `ashuproj-454704.bronze_dataset.customer_reviews`) source
 ON target.id = source.id AND target.is_active = true
 WHEN MATCHED AND 
             (
@@ -317,14 +317,14 @@ WHEN MATCHED AND
         target.effective_end_date = current_timestamp();
 
 --Step 3: Insert New or Updated Records
-MERGE INTO `avd-databricks-demo.silver_dataset.customer_reviews` target
+MERGE INTO `ashuproj-454704.silver_dataset.customer_reviews` target
 USING 
   (SELECT 
     *, 
     CURRENT_TIMESTAMP() AS effective_start_date,
     CURRENT_TIMESTAMP() AS effective_end_date,
     TRUE AS is_active
-  FROM `avd-databricks-demo.bronze_dataset.customer_reviews`) source
+  FROM `ashuproj-454704.bronze_dataset.customer_reviews`) source
 ON target.id = source.id AND target.is_active = true
 WHEN NOT MATCHED THEN 
     INSERT (id, customer_id, product_id, rating, review_text, review_date, effective_start_date, effective_end_date, is_active)
